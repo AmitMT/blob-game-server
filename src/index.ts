@@ -1,7 +1,10 @@
+import { bold, cyan, underline } from 'chalk';
 import cors from 'cors';
 import { config } from 'dotenv';
 import express from 'express';
 import { Server } from 'socket.io';
+
+import socketRouter from './socketRouter';
 
 config();
 
@@ -13,7 +16,7 @@ app.use(express.json());
 app.use(cors());
 
 const server = app.listen(PORT, () => {
-	console.log(`Listening on http://localhost:${PORT}`);
+	console.log(bold(underline(cyan(`\nListening on http://localhost:${PORT}\n`))));
 });
 
 // Socket setup
@@ -23,14 +26,6 @@ const io = new Server(server, {
 	},
 });
 
-let count = 0;
-
 io.on('connection', (socket) => {
-	console.log(`New socket connection: ${socket.id}`);
-	console.log(socket);
-
-	socket.on('counter', () => {
-		count += 1;
-		io.emit('counter', count);
-	});
+	socketRouter(io, socket);
 });
