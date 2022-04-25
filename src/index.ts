@@ -4,6 +4,7 @@ import { config } from 'dotenv';
 import express from 'express';
 import { Server } from 'socket.io';
 
+import { tanks } from './clients';
 import socketRouter from './socketRouter';
 
 config();
@@ -29,3 +30,7 @@ const io = new Server(server, {
 io.on('connection', (socket) => {
 	socketRouter(io, socket);
 });
+
+setInterval(() => {
+	io.emit('tanks-data', ...tanks.map((n) => n.tankDataString));
+}, 2000);

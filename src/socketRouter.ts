@@ -1,22 +1,26 @@
 import { bold, green, red, dim } from 'chalk';
 import { Socket, Server } from 'socket.io';
 
-const clients: { socket: Socket }[] = [];
+import { add, clients, remove, Tank, update } from './clients';
 
 export default (io: Server, socket: Socket) => {
-	clients.push({ socket });
 	console.log(
 		bold(green('New connection: ')) +
 			socket.id +
-			dim(` (Index: ${clients.length - 1}) [${clients.map((n) => ` ${n.socket.id}`)} ]`),
+			dim(` (Index: ${add(socket)}) [${clients.map((n) => ` ${n.socket.id}`)} ]`),
 	);
 
-	socket.emit('connected', clients.length - 1);
+	socket.on('player-data', (tankDataString: string) => {
+		const tank: Tank = { tankDataString, tankData: JSON.parse(tankDataString) };
+
+		update(socket, tank);
+	});
+
+	socket.emit('connected');
 
 	socket.on('disconnect', () => {
-		const id = clients.findIndex((n) => n.socket === socket);
-
-		clients.splice(id, 1);
+		const id = remove(socket);
+		remove(socket);
 		console.log(
 			bold(red('Disconnected: ')) +
 				socket.id +
