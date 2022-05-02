@@ -1,30 +1,23 @@
-import { bold, green, red, dim } from 'chalk';
+import { bold, green, dim, red } from 'chalk';
 import { Socket, Server } from 'socket.io';
 
-import { add, clients, remove, Tank, update } from './clients';
+import { add, clients, update, remove } from './clients';
 
 export default (io: Server, socket: Socket) => {
-	console.log(
-		bold(green('New connection: ')) +
-			socket.id +
-			dim(` (Index: ${add(socket)}) [${clients.map((n) => ` ${n.socket.id}`)} ]`),
-	);
+	const tankId = socket.handshake.auth.tankId as string;
 
-	socket.on('player-data', (tankDataString: string) => {
-		const tank: Tank = { tankDataString, tankData: JSON.parse(tankDataString) };
-
-		update(socket, tank);
-	});
-
+	add(tankId);
 	socket.emit('connected');
 
+	console.log(`${bold(green('New connection: ')) + tankId}\n${dim(`[${Object.keys(clients)}]`)}\n`);
+
+	socket.on('update-tank-data', (tankDataString: string) => {
+		update(tankId, { tankDataString });
+	});
+
 	socket.on('disconnect', () => {
-		const id = remove(socket);
-		remove(socket);
-		console.log(
-			bold(red('Disconnected: ')) +
-				socket.id +
-				dim(` (Index: ${id}) [${clients.map((n) => ` ${n.socket.id}`)} ]`),
-		);
+		remove(tankId);
+
+		console.log(`${bold(red('Disconnected: ')) + tankId}\n${dim(`[${Object.keys(clients)}]`)}\n`);
 	});
 };
