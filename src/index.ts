@@ -33,4 +33,4 @@ io.on('connection', (socket) => {
 
 setInterval(() => {
 	io.emit('tanks-data', ...tanks.map((n) => n.tankDataString));
-}, 2000);
+}, 30);

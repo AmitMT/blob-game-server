@@ -7,6 +7,7 @@ export default (io: Server, socket: Socket) => {
 	const tankId = socket.handshake.auth.tankId as string;
 
 	add(tankId);
+
 	socket.emit('connected');
 
 	console.log(`${bold(green('New connection: ')) + tankId}\n${dim(`[${Object.keys(clients)}]`)}\n`);
