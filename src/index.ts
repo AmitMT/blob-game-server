@@ -18,6 +18,10 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+app.get('/', (req, res) => {
+	res.send('Hello!');
+});
+
 const server = app.listen(PORT, () => {
 	console.log(bold(underline(cyan(`\nListening on http://localhost:${PORT}\n`))));
 });
