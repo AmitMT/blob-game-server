@@ -1,3 +1,5 @@
+/** * בס"ד ** */
+
 import { bold, cyan, underline } from 'chalk';
 import cors from 'cors';
 import { config } from 'dotenv';
