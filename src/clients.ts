@@ -30,6 +30,10 @@ export const remove = (tankId: string) => {
 	if (index !== -1) tanks.splice(index, 1);
 };
 
-export const hit = (tankId: string, damage: number) => {
-	clients[tankId]?.socket?.emit('you-got-hit', damage);
+export const hit = (tankId: string, enemyId: string, damage: number) => {
+	clients[enemyId]?.socket?.emit('you-got-hit', damage, tankId);
+};
+
+export const killed = (tankId: string) => {
+	clients[tankId]?.socket?.emit('you-killed');
 };
